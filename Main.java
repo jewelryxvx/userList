@@ -9,6 +9,14 @@ public class Main {
     static long ai;
     public static void main(String[] args) {
         User user;
+        Scanner console = new Scanner(System.in);
+        System.out.println("Добро пожаловать!!!");
+        System.out.println("Вы зарегестрированы?");
+        String yesNo = console.nextLine();
+        System.out.println("Введите ваше Имя:");
+        String name = console.nextLine();
+        System.out.println("Введите вашу Фамилию:");
+        String lastName = console.nextLine();
         ArrayList<User> list = new ArrayList<User>();
         ArrayList<User> listCopy = new ArrayList<User>();
         File file = new File("User.txt");
@@ -19,15 +27,7 @@ public class Main {
         catch(IOException e){
             e.printStackTrace();
         }
-        Scanner console = new Scanner(System.in);
-        System.out.println("Добро пожаловать!!!");
-        System.out.println("Вы зарегестрированы?");
-        String yesNo = console.nextLine();
         if(yesNo.equals("да")) {
-            System.out.println("Введите ваше Имя:");
-            String name = console.nextLine();
-            System.out.println("Введите вашу Фамилию:");
-            String lastName = console.nextLine();
             try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
                 list = (ArrayList<User>) objectInputStream.readObject();
                 for (User u:list) {
@@ -39,35 +39,33 @@ public class Main {
                 e.printStackTrace();
             }
         }
-
         if(yesNo.equals("нет")){
-            System.out.println("Введите ваше имя: ");
-            String name = console.nextLine();
-            System.out.println("Введите фамилию: ");
-            String lastName = console.nextLine();
             System.out.println("Сколько вам лет?");
             int age = console.nextInt();
-                try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
-                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))){
-                    if(ai == 0){
+            if(ai == 0){
+                try(ObjectOutputStream objectoutputStream = new ObjectOutputStream(new FileOutputStream(file)) ){
                         System.out.println("Поздравляю ваши данные будут записаны первыми!!!");
                         user = new User(name, lastName, age);
                         list.add(user);
                         objectOutputStream.writeObject(list);
-                    }
-                    else{
-                        System.out.println("Лист создан");
-                        listCopy = ((ArrayList<User>)objectInputStream.readObject());
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                    }      
+                    else if(ai>0){
+                        try(ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
+                          ObjectOutputStream objectoutputStream = new ObjectOutputStream(new FileOutputStream(file))){
+                        listCopy = (ArrayList<User>) objectInputStream.readObject();
                         System.out.println("Лист загружен");
                         System.out.println( listCopy.get(0));
-                       /* user = new User(name, lastName, age);
-                        list.add(user);
+                        user = new User(name, lastName, age);
+                        listCopy.add(user);
                         objectOutputStream.writeObject(list);
-                        System.out.println("Ваши данные записаны!");*/
+                        System.out.println("Ваши данные записаны!");
+                    }catch(Exception e){
+                            e.printStackTrace();
                     }
-            } catch (Exception e){
-                e.printStackTrace();
-            }
+                }
         }
 
     }
